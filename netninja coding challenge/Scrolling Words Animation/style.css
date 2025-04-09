@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: white;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  position: relative;
+}
+
+/* Container to hold languages */
+.language-slider {
+  position: relative;
+  height: 1.5em;
+  width: 150px;
+  overflow: hidden;
+}
+
+.lang {
+  position: absolute;
+  opacity: 0;
+  animation: fadeInOut 5s infinite;
+}
+
+/* Each language gets delayed */
+.lang-html {
+  color: #a259ff;
+  animation-delay: 0s;
+}
+.lang-js {
+  color: #f7df1e;
+  animation-delay: 1s;
+}
+.lang-react {
+  color: #61dafb;
+  animation-delay: 2s;
+}
+.lang-node {
+  color: #3c873a;
+  animation-delay: 3s;
+}
+.lang-python {
+  color: #3572A5;
+  animation-delay: 4s;
+}
+
+/* Animation definition */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(100%); }
+  10% { opacity: 1; transform: translateY(0); }
+  20% { opacity: 1; }
+  30% { opacity: 0; transform: translateY(-100%); }
+  100% { opacity: 0; }
+}
