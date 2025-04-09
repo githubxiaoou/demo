@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js 3D 城市场景</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script>
+    // 初始化场景
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+    
+    // 添加轨道控制器
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    camera.position.set(0, 10, 20);
+    controls.update();
+    
+    // 添加地面
+    const groundGeometry = new THREE.PlaneGeometry(50, 50);
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x222222 });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+    
+    // 添加建筑物
+    function createBuilding(x, z, width, height, depth, color) {
+        const geometry = new THREE.BoxGeometry(width, height, depth);
+        const material = new THREE.MeshStandardMaterial({ color: color });
+        const building = new THREE.Mesh(geometry, material);
+        building.position.set(x, height / 2, z);
+        scene.add(building);
+    }
+    
+    for (let i = -20; i <= 20; i += 10) {
+        createBuilding(i, -10, 5, Math.random() * 10 + 10, 5, 0x888888);
+        createBuilding(i, 10, 5, Math.random() * 10 + 10, 5, 0x555555);
+    }
+    
+    // 添加路灯
+    function createStreetLight(x, z) {
+        const lightPole = new THREE.CylinderGeometry(0.2, 0.2, 5, 16);
+        const poleMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+        const pole = new THREE.Mesh(lightPole, poleMaterial);
+        pole.position.set(x, 2.5, z);
+        scene.add(pole);
+        
+        const lightBulb = new THREE.SphereGeometry(0.5, 16, 16);
+        const bulbMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        const bulb = new THREE.Mesh(lightBulb, bulbMaterial);
+        bulb.position.set(x, 5, z);
+        scene.add(bulb);
+        
+        const pointLight = new THREE.PointLight(0xffffaa, 1, 10);
+        pointLight.position.set(x, 5, z);
+        scene.add(pointLight);
+    }
+    
+    createStreetLight(-5, 0);
+    createStreetLight(5, 0);
+    
+    // 添加汽车
+    function createCar(x, z) {
+        const carGeometry = new THREE.BoxGeometry(2, 1, 1);
+        const carMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const car = new THREE.Mesh(carGeometry, carMaterial);
+        car.position.set(x, 0.5, z);
+        scene.add(car);
+        return car;
+    }
+    
+    const car1 = createCar(-5, 0);
+    const car2 = createCar(5, 0);
+    
+    // 添加行人
+    function createPedestrian(x, z) {
+        const pedGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const pedMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const pedestrian = new THREE.Mesh(pedGeometry, pedMaterial);
+        pedestrian.position.set(x, 0.5, z);
+        scene.add(pedestrian);
+        return pedestrian;
+    }
+    
+    const pedestrian = createPedestrian(0, 5);
+    
+    // 动态灯光
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 10, 5);
+    scene.add(directionalLight);
+    
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.01;
+        
+        // 模拟昼夜变换
+        const lightIntensity = (Math.sin(time) + 1.5) / 2.5;
+        directionalLight.intensity = lightIntensity;
+        renderer.setClearColor(new THREE.Color(0x000033).lerp(new THREE.Color(0x87CEEB), lightIntensity));
+        
+        // 让汽车移动
+        car1.position.x += 0.05;
+        if (car1.position.x > 10) car1.position.x = -10;
+        
+        car2.position.x -= 0.05;
+        if (car2.position.x < -10) car2.position.x = 10;
+        
+        // 让行人过马路
+        pedestrian.position.z -= 0.02;
+        if (pedestrian.position.z < -5) pedestrian.position.z = 5;
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>

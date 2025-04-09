@@ -1,0 +1,46 @@
+/* 基础样式 */
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+.burger {
+  width: 30px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.burger div {
+  height: 4px;
+  background-color: #333;
+  transition: all 0.3s ease;
+}
+
+/* 点击后按钮变形为“X” */
+.burger.active div:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.burger.active div:nth-child(2) {
+  opacity: 0;
+}
+
+.burger.active div:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* 菜单样式 */
+.nav {
+  margin-top: 20px;
+  display: none;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.nav.open {
+  display: block;
+}
